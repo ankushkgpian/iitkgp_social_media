@@ -21,7 +21,7 @@ const Signup = () => {
     setError('');
 
     try {
-      const res = await axios.post('${API}/api/auth/signup', formData);
+      const res = await axios.post(`${API}/api/auth/signup`, formData);
       setMessage(res.data.message);
     } catch (err) {
       setError(err.response?.data?.error || 'Signup failed');
