@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+const API = process.env.REACT_APP_BACKEND_URL;
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -21,7 +21,7 @@ const Signup = () => {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', formData);
+      const res = await axios.post('${API}/api/auth/signup', formData);
       setMessage(res.data.message);
     } catch (err) {
       setError(err.response?.data?.error || 'Signup failed');
