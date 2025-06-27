@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getToken, getUser } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
-
+const API = process.env.REACT_APP_BACKEND_URL;
 const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState('');
@@ -14,7 +14,7 @@ const Feed = () => {
   useEffect(() => {
     if (!token) return navigate('/login');
 
-    axios.get('http://localhost:5000/api/feed', {
+    axios.get(`${API}/api/auth/login`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setPosts(res.data))
@@ -26,7 +26,7 @@ const Feed = () => {
     if (!content.trim()) return;
 
     try {
-      const res = await axios.post('http://localhost:5000/api/feed',
+      const res = await axios.post(`${API}/api/auth/login`,
         { content },
         { headers: { Authorization: `Bearer ${token}` } }
       );
