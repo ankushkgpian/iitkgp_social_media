@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express(); // ✅ Declare `app` first!
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: 'https://kgpsocial.vercel.app/' }));
 app.use(express.json());
 
 // ✅ Import Routes
