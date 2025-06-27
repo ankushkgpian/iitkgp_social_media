@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getToken, getUser } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
+
 const API = process.env.REACT_APP_BACKEND_URL;
+
 const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState('');
@@ -14,11 +16,14 @@ const Feed = () => {
   useEffect(() => {
     if (!token) return navigate('/login');
 
-    axios.get(`${API}/api/auth/login`, {
+    axios.get(`${API}/api/feed`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setPosts(res.data))
-    .catch(() => navigate('/login'));
+    .catch((err) => {
+      console.error("Feed fetch failed:", err);
+      navigate('/login');
+    });
   }, []);
 
   const handlePost = async (e) => {
@@ -26,13 +31,14 @@ const Feed = () => {
     if (!content.trim()) return;
 
     try {
-      const res = await axios.post(`${API}/api/auth/login`,
+      const res = await axios.post(`${API}/api/feed`,
         { content },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setPosts([res.data, ...posts]);
       setContent('');
     } catch (err) {
+      console.error('Failed to post:', err);
       alert('Failed to post');
     }
   };
