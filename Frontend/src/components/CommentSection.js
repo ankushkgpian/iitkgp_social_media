@@ -13,7 +13,7 @@ const CommentSection = ({ postId }) => {
   const token = getToken();
 
   useEffect(() => {
-    axios.get(`${API}/api/posts/${postId}/comments`, {
+    axios.get(`${API}/api/comments/${postId}`), {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setComments(res.data))
@@ -26,8 +26,7 @@ const CommentSection = ({ postId }) => {
 
     try {
       const res = await axios.post(
-        `${API}/api/posts/${postId}/comments`,
-        { content, anonymous },
+        axios.post(`${API}/api/comments/${postId}`, { content, anonymous },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setComments([...comments, res.data]);
