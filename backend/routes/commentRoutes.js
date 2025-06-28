@@ -9,7 +9,7 @@ const {
 const auth = require('../middleware/auth');
 
 // Specific routes first ✅
-router.patch('/:commentId/upvote', auth, upvoteComment);  // ✅ upvote
+router.patch('/upvote/:commentId', auth, upvoteComment); // ✅ upvote
 router.delete('/:commentId', auth, deleteComment);        // ✅ delete
 
 // Generic ones after
