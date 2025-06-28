@@ -29,7 +29,7 @@ const CommentSection = ({ postId }) => {
     };
 
     fetchComments();
-  }, [postId, token]);
+  }, [postId]);
 
   const handleComment = async (e) => {
     e.preventDefault();
@@ -41,11 +41,39 @@ const CommentSection = ({ postId }) => {
         { content, anonymous },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setComments([...comments, res.data]);
+      setComments([res.data, ...comments]);
       setContent('');
       setAnonymous(false);
     } catch (err) {
       alert('Failed to post comment');
+    }
+  };
+
+  const handleUpvote = async (commentId) => {
+    try {
+      const res = await axios.patch(
+        `${API}/api/comments/upvote/${commentId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setComments(comments.map(c =>
+        c._id === commentId ? { ...c, upvotes: res.data.upvotes } : c
+      ));
+    } catch (err) {
+      console.error('Upvote failed:', err);
+    }
+  };
+
+  const handleDelete = async (commentId) => {
+    if (!window.confirm('Delete this comment?')) return;
+
+    try {
+      await axios.delete(`${API}/api/comments/${commentId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setComments(comments.filter(c => c._id !== commentId));
+    } catch (err) {
+      alert('Failed to delete comment');
     }
   };
 
@@ -60,7 +88,7 @@ const CommentSection = ({ postId }) => {
           onClick={() => setCollapsed(!collapsed)}
           className="text-xs text-blue-600 hover:underline"
         >
-          {collapsed ? 'Show comments' : 'Hide comments'}
+          {collapsed ? 'Show' : 'Hide'}
         </button>
       </div>
 
@@ -72,7 +100,19 @@ const CommentSection = ({ postId }) => {
         <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
           {comments.map((c) => (
             <div key={c._id} className="text-sm pl-2 border-l-2 border-gray-300">
-              <p className="font-medium">{c.anonymous ? 'Anonymous' : c.author?.name}</p>
+              <div className="flex justify-between">
+                <p className="font-medium">{c.anonymous ? 'Anonymous' : c.author?.name}</p>
+                <div className="flex gap-3 text-xs">
+                  <button onClick={() => handleUpvote(c._id)} className="text-blue-500 hover:underline">
+                    👍 {c.upvotes || 0}
+                  </button>
+                  {user?.email === c.author?.email && (
+                    <button onClick={() => handleDelete(c._id)} className="text-red-500 hover:underline">
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
               <p>{c.content}</p>
             </div>
           ))}
