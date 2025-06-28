@@ -8,9 +8,12 @@ const {
 } = require('../controllers/commentController');
 const auth = require('../middleware/auth');
 
-router.post('/:postId', auth, addComment);
-router.get('/:postId', getComments);
-router.patch('/upvote/:commentId', auth, upvoteComment);
-router.delete('/:commentId', auth, deleteComment);
+// Specific routes first ✅
+router.patch('/:commentId/upvote', auth, upvoteComment);  // ✅ upvote
+router.delete('/:commentId', auth, deleteComment);        // ✅ delete
+
+// Generic ones after
+router.post('/post/:postId', auth, addComment);           // ✅ create comment on post
+router.get('/post/:postId', getComments);                 // ✅ get comments for post
 
 module.exports = router;
