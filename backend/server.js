@@ -5,23 +5,24 @@ const cors = require('cors');
 
 dotenv.config();
 
-const app = express(); // ✅ Declare `app` first!
+const app = express();
 
-app.use(cors({ origin: 'https://kgpsocial.vercel.app' }));
+// Middleware
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 app.use(express.json());
 
-// ✅ Import Routes
+// Import routes
 const authRoutes = require('./routes/authRoutes');
-const feedRoutes = require('./routes/feedRoutes'); // ✅ Add feedRoutes
+const feedRoutes = require('./routes/feedRoutes');
 const commentRoutes = require('./routes/commentRoutes');
-app.use('/api/comments', commentRoutes);
-// ✅ Use Routes
-app.use('/api/auth', authRoutes);
-app.use('/api', feedRoutes); // ✅ Mount feed routes under /api
 
-// ✅ MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI)
+// Use routes
+app.use('/api/auth', authRoutes);
+app.use('/api', feedRoutes);
+app.use('/api/comments', commentRoutes);
+
+// DB connection and server start
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB Connected');
     app.listen(process.env.PORT || 5000, () => {
