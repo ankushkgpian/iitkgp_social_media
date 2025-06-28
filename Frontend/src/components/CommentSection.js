@@ -8,16 +8,28 @@ const CommentSection = ({ postId }) => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState('');
   const [anonymous, setAnonymous] = useState(false);
-  const user = getUser();
+  const [loading, setLoading] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
+
   const token = getToken();
+  const user = getUser();
 
   useEffect(() => {
-    axios.get(`${API}/api/comments/${postId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(res => setComments(res.data))
-    .catch(err => console.error('Error loading comments:', err));
-  }, [postId]);
+    const fetchComments = async () => {
+      try {
+        const res = await axios.get(`${API}/api/comments/${postId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setComments(res.data);
+      } catch (err) {
+        console.error('Error loading comments:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComments();
+  }, [postId, token]);
 
   const handleComment = async (e) => {
     e.preventDefault();
@@ -39,14 +51,36 @@ const CommentSection = ({ postId }) => {
 
   return (
     <div className="mt-2">
-      {comments.map(c => (
-        <div key={c._id} className="text-sm mb-1 pl-2 border-l-2 border-gray-300">
-          <p className="font-medium">{c.anonymous ? 'Anonymous' : c.author?.name}</p>
-          <p>{c.content}</p>
-        </div>
-      ))}
+      {/* Header with count and toggle */}
+      <div className="flex justify-between items-center mb-2">
+        <h4 className="text-sm font-semibold text-gray-700">
+          {comments.length} {comments.length === 1 ? 'Comment' : 'Comments'}
+        </h4>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-xs text-blue-600 hover:underline"
+        >
+          {collapsed ? 'Show comments' : 'Hide comments'}
+        </button>
+      </div>
 
-      <form onSubmit={handleComment} className="mt-2">
+      {/* Loading state */}
+      {loading && <p className="text-sm text-gray-500">Loading comments...</p>}
+
+      {/* Comments */}
+      {!collapsed && !loading && comments.length > 0 && (
+        <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+          {comments.map((c) => (
+            <div key={c._id} className="text-sm pl-2 border-l-2 border-gray-300">
+              <p className="font-medium">{c.anonymous ? 'Anonymous' : c.author?.name}</p>
+              <p>{c.content}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* New comment form */}
+      <form onSubmit={handleComment} className="mt-3">
         <textarea
           className="w-full p-2 border rounded text-sm"
           rows="2"
@@ -64,7 +98,10 @@ const CommentSection = ({ postId }) => {
             />
             Comment anonymously
           </label>
-          <button type="submit" className="text-blue-600 text-sm font-medium">
+          <button
+            type="submit"
+            className="text-blue-600 text-sm font-medium hover:underline"
+          >
             Post
           </button>
         </div>
