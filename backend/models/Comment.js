@@ -18,6 +18,14 @@ const commentSchema = new mongoose.Schema({
     ref: 'Post',
     required: true
   },
+  upvotes: {
+  type: Number,
+  default: 0
+},
+upvotedBy: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User'
+}],
   createdAt: {
     type: Date,
     default: Date.now
