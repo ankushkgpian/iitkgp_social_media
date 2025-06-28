@@ -13,7 +13,8 @@ app.use(express.json());
 // ✅ Import Routes
 const authRoutes = require('./routes/authRoutes');
 const feedRoutes = require('./routes/feedRoutes'); // ✅ Add feedRoutes
-
+const commentRoutes = require('./routes/commentRoutes');
+app.use('/api/comments', commentRoutes);
 // ✅ Use Routes
 app.use('/api/auth', authRoutes);
 app.use('/api', feedRoutes); // ✅ Mount feed routes under /api
