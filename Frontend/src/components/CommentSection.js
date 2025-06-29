@@ -25,7 +25,7 @@ const CommentSection = ({ postId }) => {
         setComments(res.data);
       } catch (err) {
         setError('Failed to load comments');
-        console.log("Fetching from:", `${API}/api/comments/post/${postId}`);
+        // console.log("Fetching from:", `${API}/api/comments/post/${postId}`);
         console.error('Error loading comments:', err);
       } finally {
         setLoading(false);
