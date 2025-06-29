@@ -18,6 +18,7 @@ const CommentSection = ({ postId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
+        console.log("Fetching from:", `${API}/api/comments/post/${postId}`);
         const res = await axios.get(`${API}/api/comments/post/${postId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
