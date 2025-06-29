@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getToken, getUser } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
+import CommentSection from '../components/CommentSection';
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
@@ -63,12 +64,18 @@ const Feed = () => {
       </form>
 
       {posts.map(post => (
-        <div key={post._id} className="mb-4 p-4 border rounded shadow">
-          <p className="font-semibold">{post.author.name}</p>
-          <p>{post.content}</p>
-          <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
+      <div key={post._id} className="mb-6 p-4 border rounded shadow">
+        <p className="font-semibold">{post.author.name}</p>
+        <p>{post.content}</p>
+        <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
+
+        {/* Comments Section */}
+        <div className="mt-3 ml-4">
+          <CommentSection postId={post._id} />
         </div>
-      ))}
+      </div>
+    ))}
+
     </div>
   );
 };
