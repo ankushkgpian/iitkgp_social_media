@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getToken, getUser } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import CommentSection from '../components/CommentSection';
-
+const API = process.env.REACT_APP_BACKEND_URL;
 const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState('');
@@ -15,11 +15,14 @@ const Feed = () => {
   useEffect(() => {
     if (!token) return navigate('/login');
 
-    axios.get('http://localhost:5000/api/feed', {
+    axios.get(`${API}/api/feed`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setPosts(res.data))
-    .catch(() => navigate('/login'));
+    .catch((err) => {
+      console.error("Feed fetch failed:", err);
+      navigate('/login');
+    });
   }, []);
 
   const handlePost = async (e) => {
@@ -27,13 +30,14 @@ const Feed = () => {
     if (!content.trim()) return;
 
     try {
-      const res = await axios.post('http://localhost:5000/api/feed',
+      const res = await axios.post(`${API}/api/feed`,
         { content },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setPosts([res.data, ...posts]);
       setContent('');
     } catch (err) {
+      console.error('Failed to post:', err);
       alert('Failed to post');
     }
   };
@@ -68,7 +72,7 @@ const Feed = () => {
         <p className="font-semibold">{post.author.name}</p>
         <p>{post.content}</p>
         <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
-
+        
         {/* Comments Section */}
         <div className="mt-3 ml-4">
           <CommentSection postId={post._id} />

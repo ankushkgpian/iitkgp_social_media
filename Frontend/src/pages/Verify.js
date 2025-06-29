@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-
+const API = process.env.REACT_APP_BACKEND_URL;
 const Verify = () => {
   const { token } = useParams();
   const [status, setStatus] = useState('Verifying...');
@@ -9,7 +9,7 @@ const Verify = () => {
   useEffect(() => {
     const verifyEmail = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/auth/verify/${token}`);
+        const res = await axios.get(`${API}/api/auth/verify/${token}`);
         setStatus(res.data.message || 'Email verified!');
       } catch (err) {
         setStatus(err.response?.data?.error || 'Verification failed');
